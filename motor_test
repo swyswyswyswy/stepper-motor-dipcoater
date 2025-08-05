@@ -44,3 +44,17 @@ def main():
             print("clockwise begin")
             motor.rotate(800, clockwise=True)
             sleep(1)
+
+            # Rotate counter-clockwise
+            print("anti clockwise")
+            motor.rotate(800, clockwise=False)
+            sleep(1)
+
+    except KeyboardInterrupt:
+        print("\nProgram stopped by user")
+    finally:
+        motor.cleanup()
+
+if __name__ == "__main__":
+    main()
+
