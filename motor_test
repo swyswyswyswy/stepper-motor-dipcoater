@@ -1,0 +1,46 @@
+from gpiozero import DigitalOutputDevice
+from time import sleep
+
+# Pin Definitions (using BCM numbering)
+enable_pin = 12  # Enable pin (active low)
+step_pin = 21    # Step pin
+dir_pin = 20     # Direction pin
+
+class StepperMotor:
+    def __init__(self):
+        # Initialize GPIO devices
+        self.enable = DigitalOutputDevice(enable_pin, active_high=False) # original False
+        self.step = DigitalOutputDevice(step_pin)
+        self.direction = DigitalOutputDevice(dir_pin)
+
+        # Enable the driver (active low, so setting to True enables)
+        self.enable.on()
+
+    def rotate(self, steps, step_delay=0.0025, clockwise=True): # original 0.0008
+        """Rotate the motor a specified number of steps"""
+        self.direction.value = clockwise  # Set direction
+        for _ in range(steps):
+            # print("about to step on")
+            self.step.on()
+            sleep(step_delay/2)
+            # print("about to step off")
+            self.step.off()
+            sleep(step_delay/2)
+            # print("this step over")
+
+    def cleanup(self):
+        """Clean up GPIO resources"""
+        self.enable.off()  # Disable the driver
+        self.enable.close()
+        self.step.close()
+        self.direction.close()
+
+def main():
+    try:
+        motor = StepperMotor()
+        # print("1")
+        while True:
+            # Rotate clockwise (1 rev for 1.8° motor)
+            print("clockwise begin")
+            motor.rotate(800, clockwise=True)
+            sleep(1)
