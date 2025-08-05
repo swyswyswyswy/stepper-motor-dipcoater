@@ -40,7 +40,7 @@ def main():
         motor = StepperMotor()
         # print("1")
         while True:
-            # Rotate clockwise (1 rev for 1.8° motor)
+            # Rotate clockwise (1 rev for 0.9° motor)
             print("clockwise begin")
             motor.rotate(800, clockwise=True)
             sleep(1)
