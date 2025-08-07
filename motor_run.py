@@ -1,7 +1,7 @@
 from gpiozero import DigitalOutputDevice
 from time import sleep
 from parameters import params
-
+from move_params import move_params
 
 
 # Pin Definitions (using BCM numbering)
@@ -49,12 +49,12 @@ def main():
 
 
         # the movement
-        dis     = params['move']['distance']
-        v_down  = params['move']['down_speed']
-        v_up    = params['move']['up_speed']
-        t_sink  = params['move']['low_stay']
-        t_top   = params['move']['high_stay']
-        repeat  = params['move']['repeat']
+        dis     = move_params['move']['distance']
+        v_down  = move_params['move']['down_speed']
+        v_up    = move_params['move']['up_speed']
+        t_sink  = move_params['move']['low_stay']
+        t_top   = move_params['move']['high_stay']
+        repeat  = move_params['move']['repeat']
 
         step            = int(360*dis/lead/stepsize)
         step_delay_down = lead*stepsize/360/v_down
