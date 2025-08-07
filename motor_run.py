@@ -49,12 +49,12 @@ def main():
 
 
         # the movement
-        dis     = params['distance']['distance']
-        v_down  = params['motor']['down_speed']
-        v_up    = params['motor']['up_speed']
-        t_sink  = params['motor']['low_stay']
-        t_top   = params['motor']['high_stay']
-        repeat  = params['motor']['repeat']
+        dis     = params['move']['distance']
+        v_down  = params['move']['down_speed']
+        v_up    = params['move']['up_speed']
+        t_sink  = params['move']['low_stay']
+        t_top   = params['move']['high_stay']
+        repeat  = params['move']['repeat']
 
         step            = int(360*dis/lead/stepsize)
         step_delay_down = lead*stepsize/360/v_down
@@ -64,12 +64,12 @@ def main():
 
 
         for i in range(repeat):
-            # Rotate clockwise
-            motor.rotate(step, step_delay_down, clockwise=True)
+            # Rotate counter-clockwise, going down
+            motor.rotate(step, step_delay_down, clockwise=False)
             sleep(t_sink)
 
-            # Rotate counter-clockwise
-            motor.rotate(step, step_delay_up, clockwise=False)
+            # Rotate clockwise, going up
+            motor.rotate(step, step_delay_up, clockwise=True)
             sleep(t_top)
             print("one cycle finished")
 

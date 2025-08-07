@@ -11,14 +11,12 @@ params = {
         'stepsize'  : 0.9, #[degree]
         'lead'      : 5 # [mm]
     },
-    'motor':{
+    'move':{
         'down_speed': 10, # [mm/s]
-        'up_speed'  : 0.10, #[mm/s]
+        'up_speed'  : 10, #[mm/s]
         'low_stay'  : 2, # [s] time stay at sinking position
         'high_stay' : 0.5, #[s]
-        'repeat'    : 3
-    },
-    'distance':{
-        'distance'  : 10 # [mm] moving distance of sample
+        'repeat'    : 3, # repeat times
+        'distance'  : 50 # [mm] moving distance of sample
     }
 }
