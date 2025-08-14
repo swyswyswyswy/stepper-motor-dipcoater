@@ -1,11 +1,11 @@
 move_params = {
     'move': {
-        'down_speed': 0.1,
-        'up_speed'  : 1,
-        'low_stay'  : 3,
-        'high_stay' : 1.5,
-        'repeat'    : 4,
-        'distance'  : 51
+        'down_speed': 10,
+        'up_speed'  : 10,
+        'low_stay'  : 0,
+        'high_stay' : 3,
+        'repeat'    : 1,
+        'distance'  : 250
     }
 }
 
