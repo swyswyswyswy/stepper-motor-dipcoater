@@ -1,0 +1,1118 @@
+[
+    {
+        "id": "dd3002e0c780c5c0",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "541571b715bc56a5",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "python /home/innoflex/stepper-motor-dipcoater/motor_run.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 580,
+        "y": 60,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "d9d31e3c0f27ad36",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "pkill -f \"/home/innoflex/stepper-motor-dipcoater/.*\\.py\"",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 560,
+        "y": 140,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "d5c7f5ba24026ba8",
+        "type": "ui_text_input",
+        "z": "dd3002e0c780c5c0",
+        "name": "Speed moving down",
+        "label": "Speed moving dowm [mm/s]",
+        "tooltip": "",
+        "group": "g1",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": 300,
+        "topic": "move.v_down",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 220,
+        "y": 320,
+        "wires": [
+            [
+                "7089421d794d21bd"
+            ]
+        ]
+    },
+    {
+        "id": "bbc7f4e64b0d7e34",
+        "type": "ui_text_input",
+        "z": "dd3002e0c780c5c0",
+        "name": "Speed moving up",
+        "label": "Speed moving up [mm/s]",
+        "tooltip": "",
+        "group": "g1",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": 300,
+        "topic": "move.v_up",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 210,
+        "y": 380,
+        "wires": [
+            [
+                "0ffe294d2c67512a"
+            ]
+        ]
+    },
+    {
+        "id": "e6efdc4a5ee808e4",
+        "type": "ui_text_input",
+        "z": "dd3002e0c780c5c0",
+        "name": "Sink time",
+        "label": "Sink time (at bottom) [s]",
+        "tooltip": "",
+        "group": "g1",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": 300,
+        "topic": "move.t_low",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 180,
+        "y": 440,
+        "wires": [
+            [
+                "e52504add419eb99"
+            ]
+        ]
+    },
+    {
+        "id": "53101ca9ff943522",
+        "type": "ui_text_input",
+        "z": "dd3002e0c780c5c0",
+        "name": "Cycles",
+        "label": "Cycles",
+        "tooltip": "",
+        "group": "g1",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": 300,
+        "topic": "move.repeat",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 170,
+        "y": 560,
+        "wires": [
+            [
+                "b4a649aefdc671a4"
+            ]
+        ]
+    },
+    {
+        "id": "73e85175e3c96fde",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "generate parameters in Python",
+        "func": "let inputs = flow.get(\"move_params\") || {};\nlet key = \"\";\n\nif (msg.topic && msg.payload !== undefined) {\n    const parts = msg.topic.split(\".\");\n    key = parts.length > 1 ? parts[1] : parts[0];\n    inputs[key] = Number(msg.payload);\n    flow.set(\"move_params\", inputs);\n}\n\nconst defaultParams = {\n    down_speed: 0,\n    up_speed: 0,\n    low_stay: 0,\n    high_stay: 0,\n    repeat: 0,\n    distance: 0\n};\nconst move = { ...defaultParams, ...inputs };\n\nlet pyString = `move_params = {\\n`;\npyString += `    'move': {\\n`;\npyString += `        'down_speed': ${move.down_speed},\\n`;\npyString += `        'up_speed'  : ${move.up_speed},\\n`;\npyString += `        'low_stay'  : ${move.low_stay},\\n`;\npyString += `        'high_stay' : ${move.high_stay},\\n`;\npyString += `        'repeat'    : ${move.repeat},\\n`;\npyString += `        'distance'  : ${move.distance}\\n`;\npyString += `    }\\n`;\npyString += `}\\n`;\n\nmsg.payload = pyString;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "fs",
+                "module": "fs"
+            },
+            {
+                "var": "path",
+                "module": "path"
+            }
+        ],
+        "x": 1330,
+        "y": 380,
+        "wires": [
+            [
+                "c11fbbbfb737320b",
+                "23ca8ba1c6ab8b18",
+                "4804421aec585004"
+            ]
+        ]
+    },
+    {
+        "id": "6df465678dbc0ea1",
+        "type": "ui_text_input",
+        "z": "dd3002e0c780c5c0",
+        "name": "moving distance",
+        "label": "Distance [mm]            !! MAX 250 !!",
+        "tooltip": "",
+        "group": "g1",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": 300,
+        "topic": "move.distance",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "821149a26aa7c407"
+            ]
+        ]
+    },
+    {
+        "id": "7089421d794d21bd",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "function 2",
+        "func": "msg.topic = \"move.down_speed\";  \nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 320,
+        "wires": [
+            [
+                "6589108253b24948"
+            ]
+        ]
+    },
+    {
+        "id": "0ffe294d2c67512a",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "function 3",
+        "func": "msg.topic = \"move.up_speed\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 380,
+        "wires": [
+            [
+                "c6ff45365b138d8c"
+            ]
+        ]
+    },
+    {
+        "id": "e52504add419eb99",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "function 4",
+        "func": "msg.topic = \"low_stay\";  \nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 440,
+        "wires": [
+            [
+                "ac7cfeae468e9280"
+            ]
+        ]
+    },
+    {
+        "id": "b4a649aefdc671a4",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "function 5",
+        "func": "msg.topic = \"move.repeat\";  \nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 560,
+        "wires": [
+            [
+                "089609a150fdf5dc"
+            ]
+        ]
+    },
+    {
+        "id": "bfb0e549a36f3479",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "START",
+        "group": "f1aa2f4c1465896f",
+        "order": 1,
+        "width": 4,
+        "height": 2,
+        "passthru": false,
+        "label": "START",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 60,
+        "wires": [
+            [
+                "541571b715bc56a5"
+            ]
+        ]
+    },
+    {
+        "id": "a1af92980d0879e9",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "STOP",
+        "group": "f1aa2f4c1465896f",
+        "order": 2,
+        "width": 4,
+        "height": 2,
+        "passthru": false,
+        "label": "STOP",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "red",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 170,
+        "y": 140,
+        "wires": [
+            [
+                "d9d31e3c0f27ad36"
+            ]
+        ]
+    },
+    {
+        "id": "11d69beb7625e6a0",
+        "type": "ui_text_input",
+        "z": "dd3002e0c780c5c0",
+        "name": "Pause time",
+        "label": "Pause time (at top) [s]",
+        "tooltip": "",
+        "group": "g1",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "number",
+        "delay": 300,
+        "topic": "move.t_top",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 190,
+        "y": 500,
+        "wires": [
+            [
+                "1c795c9ce979fdad"
+            ]
+        ]
+    },
+    {
+        "id": "1c795c9ce979fdad",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "function 6",
+        "func": "msg.topic = \"high_stay\";  \nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 500,
+        "wires": [
+            [
+                "6cda228e39fa31cf"
+            ]
+        ]
+    },
+    {
+        "id": "bb58dc2d22551d51",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "GO UP 10mm",
+        "group": "f1aa2f4c1465896f",
+        "order": 8,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "GO UP 10mm",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#00CC66",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 200,
+        "y": 780,
+        "wires": [
+            [
+                "54c9714e029ec409"
+            ]
+        ]
+    },
+    {
+        "id": "54c9714e029ec409",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "python /home/innoflex/stepper-motor-dipcoater/up_motor.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 600,
+        "y": 780,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e5b1acd8462d8dad",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "GO DOWN 10mm",
+        "group": "f1aa2f4c1465896f",
+        "order": 17,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "GO DOWN 10mm",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#999900",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 210,
+        "y": 860,
+        "wires": [
+            [
+                "72d8415be3b80451"
+            ]
+        ]
+    },
+    {
+        "id": "72d8415be3b80451",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "python /home/innoflex/stepper-motor-dipcoater/down_motor.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 610,
+        "y": 860,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "821149a26aa7c407",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "name input",
+        "func": "msg.topic = \"move.distance\";  \nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 260,
+        "wires": [
+            [
+                "553b8fccdbf8bfc3",
+                "27140228b0e8dc42"
+            ]
+        ]
+    },
+    {
+        "id": "23ca8ba1c6ab8b18",
+        "type": "file",
+        "z": "dd3002e0c780c5c0",
+        "name": "",
+        "filename": "/home/innoflex/stepper-motor-dipcoater/move_params.py",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1730,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c11fbbbfb737320b",
+        "type": "debug",
+        "z": "dd3002e0c780c5c0",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1580,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "553b8fccdbf8bfc3",
+        "type": "debug",
+        "z": "dd3002e0c780c5c0",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "4804421aec585004",
+        "type": "ui_text",
+        "z": "dd3002e0c780c5c0",
+        "group": "g1",
+        "order": 7,
+        "width": 11,
+        "height": 3,
+        "name": "",
+        "label": "parameters of move",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": true,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1640,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "6e49db45b2223e09",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "",
+        "group": "g1",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Generate path",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1120,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b18df6c34ca7d017",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "GO UP 1mm",
+        "group": "f1aa2f4c1465896f",
+        "order": 11,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "GO UP 1mm",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#00FF80",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 940,
+        "wires": [
+            [
+                "252a65b7ba80fb77"
+            ]
+        ]
+    },
+    {
+        "id": "252a65b7ba80fb77",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "python /home/innoflex/stepper-motor-dipcoater/up_small_motor.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 620,
+        "y": 940,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "a3429340e86f64f8",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "GO DOWN 1mm",
+        "group": "f1aa2f4c1465896f",
+        "order": 14,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "GO DOWN 1mm",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#CCCC00",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 210,
+        "y": 1020,
+        "wires": [
+            [
+                "6e75f0eb78716808"
+            ]
+        ]
+    },
+    {
+        "id": "6e75f0eb78716808",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "python /home/innoflex/stepper-motor-dipcoater/down_small_motor.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 630,
+        "y": 1020,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "27140228b0e8dc42",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "input limit & warning",
+        "func": "let value = Number(msg.payload);\n\nif (value < 0) {\n    msg.error_input = \"the distance should be between 0-250, has automatically changed to 0\";\n    value = 0;\n}\nif (value > 250) {\n    msg.error_input = \"the distance should be between 0-250, has automatically changed to 250\";\n    value = 250;\n}\n\nmsg.payload = value;\nreturn [msg, { payload: msg.error_input }];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 260,
+        "wires": [
+            [
+                "73e85175e3c96fde"
+            ],
+            [
+                "5d492f5ee21f24a8"
+            ]
+        ]
+    },
+    {
+        "id": "5d492f5ee21f24a8",
+        "type": "ui_toast",
+        "z": "dd3002e0c780c5c0",
+        "position": "dialog",
+        "displayTime": "2",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Input ERROR",
+        "x": 1260,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6589108253b24948",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "input limit & warning",
+        "func": "let value = Number(msg.payload);\n\nif (value <= 0) {\n    msg.error_input = \"the speed should be bigger than 0, has automatically changed to 0.1\";\n    value = 0.1;\n}\n\n\nmsg.payload = value;\nreturn [msg, { payload: msg.error_input }];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 320,
+        "wires": [
+            [
+                "73e85175e3c96fde"
+            ],
+            [
+                "5d492f5ee21f24a8"
+            ]
+        ]
+    },
+    {
+        "id": "c6ff45365b138d8c",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "input limit & warning",
+        "func": "let value = Number(msg.payload);\n\nif (value <= 0) {\n    msg.error_input = \"the speed should be bigger than 0, has automatically changed to 0.1\";\n    value = 0.1;\n}\n\n\nmsg.payload = value;\nreturn [msg, { payload: msg.error_input }];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 380,
+        "wires": [
+            [
+                "73e85175e3c96fde"
+            ],
+            [
+                "5d492f5ee21f24a8"
+            ]
+        ]
+    },
+    {
+        "id": "ac7cfeae468e9280",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "input limit & warning",
+        "func": "let value = Number(msg.payload);\n\nif (value < 0) {\n    msg.error_input = \"the time cannot be negative, has automatically changed to 0\";\n    value = 0;\n}\n\n\nmsg.payload = value;\nreturn [msg, { payload: msg.error_input }];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 440,
+        "wires": [
+            [
+                "73e85175e3c96fde"
+            ],
+            [
+                "5d492f5ee21f24a8"
+            ]
+        ]
+    },
+    {
+        "id": "6cda228e39fa31cf",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "input limit & warning",
+        "func": "let value = Number(msg.payload);\n\nif (value < 0) {\n    msg.error_input = \"the time cannot be negative, has automatically changed to 0\";\n    value = 0;\n}\n\n\nmsg.payload = value;\nreturn [msg, { payload: msg.error_input }];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 500,
+        "wires": [
+            [
+                "73e85175e3c96fde"
+            ],
+            [
+                "5d492f5ee21f24a8"
+            ]
+        ]
+    },
+    {
+        "id": "089609a150fdf5dc",
+        "type": "function",
+        "z": "dd3002e0c780c5c0",
+        "name": "input limit & warning",
+        "func": "let value = Number(msg.payload);\n\nif (value < 0 || !Number.isInteger(value)) {\n    msg.error_input = \"the cycles should be a positive integer, has automatically changed to 1\";\n    value = 1;\n}\n\n\nmsg.payload = value;\nreturn [msg, { payload: msg.error_input }];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 560,
+        "wires": [
+            [
+                "73e85175e3c96fde"
+            ],
+            [
+                "5d492f5ee21f24a8"
+            ]
+        ]
+    },
+    {
+        "id": "30896897c056c6b2",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "UP TO TOP",
+        "group": "f1aa2f4c1465896f",
+        "order": 5,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "UP TO TOP",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#006633",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 190,
+        "y": 1100,
+        "wires": [
+            [
+                "37e952128e343a1c"
+            ]
+        ]
+    },
+    {
+        "id": "37e952128e343a1c",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "python /home/innoflex/stepper-motor-dipcoater/up_to_top_motor.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 620,
+        "y": 1100,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "b29a583265845fe0",
+        "type": "ui_button",
+        "z": "dd3002e0c780c5c0",
+        "name": "DOWN TO BOTTOM",
+        "group": "f1aa2f4c1465896f",
+        "order": 20,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "DOWN TO BOTTOM",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#666600",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 220,
+        "y": 1180,
+        "wires": [
+            [
+                "0e5777317cbe050a"
+            ]
+        ]
+    },
+    {
+        "id": "0e5777317cbe050a",
+        "type": "exec",
+        "z": "dd3002e0c780c5c0",
+        "command": "python /home/innoflex/stepper-motor-dipcoater/down_to_bottom_motor.py ",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 640,
+        "y": 1180,
+        "wires": [
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "0ca0b7cc89f96297",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 3,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "5e6cf01f753826e3",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 4,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "f1d6469de94e423a",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 6,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "53debb8d26e0ba10",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 7,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "ccb961927e470973",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 9,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "ce988ea09d1b0f20",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 10,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "3420a1024f6184f1",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 12,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "2749860b37d00425",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 13,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "6d2498bff4569eae",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 15,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "a22c54bcec3ecd21",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 16,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "526c97921474f43a",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 18,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "456e219c142a109a",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 19,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "1c68dad024569076",
+        "type": "ui_spacer",
+        "z": "dd3002e0c780c5c0",
+        "name": "spacer",
+        "group": "f1aa2f4c1465896f",
+        "order": 21,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "g1",
+        "type": "ui_group",
+        "name": "input & generate",
+        "tab": "t1",
+        "order": 1,
+        "disp": true,
+        "width": 11,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f1aa2f4c1465896f",
+        "type": "ui_group",
+        "name": "START/STOP",
+        "tab": "t1",
+        "order": 2,
+        "disp": true,
+        "width": 8,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "t1",
+        "type": "ui_tab",
+        "name": "Set parameters",
+        "icon": "settings",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
