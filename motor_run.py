@@ -49,12 +49,15 @@ def main():
 
 
         # the movement
-        dis     = move_params['move']['distance']
-        v_down  = move_params['move']['down_speed']
-        v_up    = move_params['move']['up_speed']
-        t_sink  = move_params['move']['low_stay']
-        t_top   = move_params['move']['high_stay']
-        repeat  = move_params['move']['repeat']
+        dis        = move_params['move']['distance']
+        v_down     = move_params['move']['down_speed']
+        v_up       = move_params['move']['up_speed']
+        t_sink     = move_params['move']['low_stay']
+        t_top      = move_params['move']['high_stay']
+        start_pt   = move_params['move']['start_point']
+        returnback = move_params['move']['returnback']
+        repeat     = move_params['move']['repeat']
+
 
         step            = int(360*dis/lead/stepsize)
         step_delay_down = lead*stepsize/360/v_down
@@ -62,15 +65,25 @@ def main():
         print(step, step_delay_down, step_delay_up)
 
 
+        if start_pt.lower() == 'top':
+            phase1 = False
+            phase2 = True
+            t1 = t_sink
+            t2 = t_top
+        else:
+            phase1 = True
+            phase2 = False
+            t1 = t_top
+            t2 = t_sink
 
         for i in range(repeat):
             # Rotate counter-clockwise, going down
-            motor.rotate(step, step_delay_down, clockwise=False)
-            sleep(t_sink)
+            motor.rotate(step, step_delay_down, clockwise = phase1)
+            sleep(t1)
 
             # Rotate clockwise, going up
-            motor.rotate(step, step_delay_up, clockwise=True)
-            sleep(t_top)
+            motor.rotate(step, step_delay_up, clockwise = phase2)
+            sleep(t2)
             print("one cycle finished")
 
     except KeyboardInterrupt:

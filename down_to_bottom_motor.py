@@ -8,7 +8,7 @@ def simple_rotate():
         motor = StepperMotor()
 
 
-        motor.rotate(steps=20000, step_delay=0.0005, clockwise=False)
+        motor.rotate(steps=24000, step_delay=0.0005, clockwise=False)
 
     except KeyboardInterrupt:
         print("\nstopped")
