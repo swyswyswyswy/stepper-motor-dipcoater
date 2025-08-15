@@ -70,19 +70,24 @@ def main():
             phase2 = True
             t1 = t_sink
             t2 = t_top
+            speed1 = step_delay_down
+            speed2 = step_delay_up
         else:
             phase1 = True
             phase2 = False
             t1 = t_top
             t2 = t_sink
+            speed1 = step_delay_up
+            speed2 = step_delay_down
+
 
         for i in range(repeat):
             # Rotate counter-clockwise, going down
-            motor.rotate(step, step_delay_down, clockwise = phase1)
+            motor.rotate(step, speed1, clockwise = phase1)
             sleep(t1)
 
             # Rotate clockwise, going up
-            motor.rotate(step, step_delay_up, clockwise = phase2)
+            motor.rotate(step, speed2, clockwise = phase2)
             sleep(t2)
             print("one cycle finished")
 
