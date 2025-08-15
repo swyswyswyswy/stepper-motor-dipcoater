@@ -84,6 +84,11 @@ def main():
         for i in range(repeat):
             # Rotate counter-clockwise, going down
             motor.rotate(step, speed1, clockwise = phase1)
+
+            if not returnback:
+                print("one way finished")
+                break
+
             sleep(t1)
 
             # Rotate clockwise, going up
