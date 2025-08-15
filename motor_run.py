@@ -55,7 +55,7 @@ def main():
         t_sink     = move_params['move']['low_stay']
         t_top      = move_params['move']['high_stay']
         start_pt   = move_params['move']['start_point']
-        returnback = move_params['move']['returnback']
+        end_pt     = move_params['move']['end_point']
         repeat     = move_params['move']['repeat']
 
 
@@ -65,7 +65,7 @@ def main():
         print(step, step_delay_down, step_delay_up)
 
 
-        if start_pt.lower() == 'top':
+        if start_pt == 'top':
             phase1 = False
             phase2 = True
             t1 = t_sink
@@ -85,8 +85,12 @@ def main():
             # Rotate counter-clockwise, going down
             motor.rotate(step, speed1, clockwise = phase1)
 
-            if not returnback:
-                print("one way finished")
+            # start at top, end at bottom , vice versa
+            if repeat == 1 and start_pt != end_pt:
+                print("one way finshed")
+                break
+
+            if i == repeat-1 and start_pt != end_pt:
                 break
 
             sleep(t1)
@@ -95,6 +99,8 @@ def main():
             motor.rotate(step, speed2, clockwise = phase2)
             sleep(t2)
             print("one cycle finished")
+
+        print("all finished")
 
     except KeyboardInterrupt:
         print("\nProgram stopped by user")
